@@ -1,0 +1,2364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GradeMind — A Level Essay Marking, Powered by Real Examiners</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   RESET & TOKENS
+   ============================================================ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --ink:     #0E0E0C;
+  --paper:   #F5F1E8;
+  --cream:   #EDE8DC;
+  --gold:    #B8943C;
+  --gold-lt: #D4AF60;
+  --red:     #8B2635;
+  --sage:    #4A5E4E;
+  --muted:   rgba(14,14,12,0.42);
+  --border:  rgba(14,14,12,0.1);
+  --serif:   'Cormorant Garamond', Georgia, serif;
+  --sans:    'DM Sans', sans-serif;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--sans);
+  background: var(--paper);
+  color: var(--ink);
+  overflow-x: hidden;
+  cursor: default;
+}
+
+/* ============================================================
+   GRAIN OVERLAY
+   ============================================================ */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
+  opacity: 0.028;
+  pointer-events: none;
+  z-index: 9999;
+}
+
+/* ============================================================
+   NAV
+   ============================================================ */
+nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 52px;
+  height: 64px;
+  background: rgba(245,241,232,0.88);
+  backdrop-filter: blur(16px);
+  border-bottom: 0.5px solid var(--border);
+  transition: background 0.3s;
+}
+
+.nav-logo {
+  font-family: var(--serif);
+  font-size: 22px;
+  font-weight: 500;
+  letter-spacing: -0.3px;
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.nav-logo em { font-style: italic; color: var(--gold); }
+
+.nav-links {
+  display: flex;
+  gap: 36px;
+  list-style: none;
+}
+
+.nav-links a {
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--muted);
+  text-decoration: none;
+  letter-spacing: 0.2px;
+  transition: color 0.2s;
+}
+
+.nav-links a:hover { color: var(--ink); }
+
+.nav-cta {
+  background: var(--ink);
+  color: var(--paper);
+  border: none;
+  padding: 9px 22px;
+  border-radius: 4px;
+  font-family: var(--sans);
+  font-size: 13px;
+  font-weight: 400;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background 0.2s, transform 0.15s;
+  letter-spacing: 0.2px;
+}
+
+.nav-cta:hover { background: var(--gold); transform: translateY(-1px); }
+
+/* ============================================================
+   HERO
+   ============================================================ */
+#hero {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  padding-top: 64px;
+  overflow: hidden;
+}
+
+.hero-left {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 80px 60px 80px 80px;
+  position: relative;
+}
+
+.hero-left::after {
+  content: '';
+  position: absolute;
+  right: 0; top: 10%; bottom: 10%;
+  width: 0.5px;
+  background: var(--border);
+}
+
+.hero-eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 32px;
+}
+
+.eyebrow-line {
+  width: 32px;
+  height: 0.5px;
+  background: var(--gold);
+}
+
+.eyebrow-text {
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--gold);
+  font-weight: 400;
+}
+
+h1 {
+  font-family: var(--serif);
+  font-size: clamp(52px, 6vw, 80px);
+  font-weight: 300;
+  line-height: 1.03;
+  letter-spacing: -2px;
+  color: var(--ink);
+  margin-bottom: 28px;
+}
+
+h1 em {
+  font-style: italic;
+  font-weight: 300;
+  color: var(--gold);
+}
+
+h1 .underline-word {
+  position: relative;
+  display: inline-block;
+}
+
+h1 .underline-word::after {
+  content: '';
+  position: absolute;
+  left: 0; bottom: 4px;
+  width: 100%;
+  height: 0.5px;
+  background: var(--ink);
+}
+
+.hero-body {
+  font-size: 15px;
+  line-height: 1.75;
+  color: var(--muted);
+  max-width: 400px;
+  margin-bottom: 44px;
+  font-weight: 300;
+}
+
+.hero-actions {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  margin-bottom: 56px;
+}
+
+.btn-primary {
+  background: var(--ink);
+  color: var(--paper);
+  border: none;
+  padding: 14px 28px;
+  border-radius: 4px;
+  font-family: var(--sans);
+  font-size: 14px;
+  font-weight: 400;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background 0.2s, transform 0.15s;
+  display: inline-block;
+}
+
+.btn-primary:hover { background: var(--gold); transform: translateY(-2px); }
+
+.btn-ghost {
+  font-size: 13px;
+  color: var(--muted);
+  text-decoration: none;
+  border-bottom: 0.5px solid var(--border);
+  padding-bottom: 2px;
+  transition: color 0.2s, border-color 0.2s;
+}
+
+.btn-ghost:hover { color: var(--ink); border-color: var(--ink); }
+
+.hero-social-proof {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.proof-avatars {
+  display: flex;
+}
+
+.proof-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 2px solid var(--paper);
+  margin-left: -8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--serif);
+  font-size: 13px;
+  color: var(--paper);
+  font-style: italic;
+}
+
+.proof-avatar:first-child { margin-left: 0; }
+.pa-1 { background: var(--ink); }
+.pa-2 { background: var(--sage); }
+.pa-3 { background: var(--red); }
+.pa-4 { background: var(--gold); }
+
+.proof-text {
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.proof-text strong { color: var(--ink); font-weight: 500; }
+
+/* ============================================================
+   HERO RIGHT — ESSAY CARD PREVIEW
+   ============================================================ */
+.hero-right {
+  background: var(--cream);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 60px;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-right::before {
+  content: 'A';
+  position: absolute;
+  font-family: var(--serif);
+  font-size: 480px;
+  font-weight: 300;
+  color: rgba(14,14,12,0.04);
+  right: -60px;
+  bottom: -80px;
+  line-height: 1;
+  pointer-events: none;
+  user-select: none;
+}
+
+.essay-preview-card {
+  background: white;
+  border-radius: 8px;
+  width: 100%;
+  max-width: 380px;
+  box-shadow: 0 4px 40px rgba(14,14,12,0.1), 0 1px 3px rgba(14,14,12,0.06);
+  overflow: hidden;
+  position: relative;
+  z-index: 1;
+  animation: float 5s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+.card-header {
+  background: var(--ink);
+  padding: 18px 22px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.card-header-left {
+  font-family: var(--serif);
+  font-size: 14px;
+  color: rgba(245,241,232,0.7);
+  font-style: italic;
+}
+
+.card-score-badge {
+  background: var(--gold);
+  color: var(--ink);
+  font-family: var(--serif);
+  font-size: 18px;
+  font-weight: 500;
+  padding: 4px 12px;
+  border-radius: 3px;
+}
+
+.card-body { padding: 20px 22px; }
+
+.card-question {
+  font-size: 11px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 12px;
+}
+
+.card-essay-text {
+  font-size: 12px;
+  line-height: 1.7;
+  color: rgba(14,14,12,0.6);
+  margin-bottom: 18px;
+  position: relative;
+}
+
+.card-essay-text::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 24px;
+  background: linear-gradient(transparent, white);
+}
+
+.card-ao-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.card-ao-chip {
+  flex: 1;
+  background: var(--cream);
+  border-radius: 4px;
+  padding: 8px 10px;
+  text-align: center;
+}
+
+.card-ao-chip .ao-label {
+  font-size: 9px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--muted);
+  display: block;
+  margin-bottom: 3px;
+}
+
+.card-ao-chip .ao-score {
+  font-family: var(--serif);
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--ink);
+}
+
+.card-feedback-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 7px 0;
+  border-bottom: 0.5px solid var(--border);
+  font-size: 12px;
+  color: rgba(14,14,12,0.65);
+  line-height: 1.5;
+}
+
+.card-feedback-item:last-child { border-bottom: none; }
+
+.card-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  margin-top: 5px;
+  flex-shrink: 0;
+}
+
+.dot-green { background: var(--sage); }
+.dot-gold  { background: var(--gold); }
+
+/* ============================================================
+   SECTION SHARED
+   ============================================================ */
+section { position: relative; }
+
+.section-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 80px;
+}
+
+/* ============================================================
+   STATS BAR
+   ============================================================ */
+#stats-bar {
+  background: var(--ink);
+  padding: 0;
+}
+
+.stats-bar-inner {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  border-left: 0.5px solid rgba(245,241,232,0.08);
+}
+
+.stat-cell {
+  padding: 40px 48px;
+  border-right: 0.5px solid rgba(245,241,232,0.08);
+  border-bottom: none;
+}
+
+.stat-num {
+  font-family: var(--serif);
+  font-size: 52px;
+  font-weight: 300;
+  color: var(--gold-lt);
+  line-height: 1;
+  margin-bottom: 6px;
+  letter-spacing: -2px;
+}
+
+.stat-label {
+  font-size: 12px;
+  color: rgba(245,241,232,0.45);
+  letter-spacing: 0.3px;
+}
+
+/* ============================================================
+   HOW IT WORKS
+   ============================================================ */
+#how {
+  padding: 120px 0;
+  background: var(--paper);
+}
+
+.section-label {
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.section-label::before {
+  content: '';
+  width: 24px;
+  height: 0.5px;
+  background: var(--gold);
+}
+
+.section-title {
+  font-family: var(--serif);
+  font-size: clamp(36px, 4vw, 56px);
+  font-weight: 300;
+  line-height: 1.1;
+  letter-spacing: -1.5px;
+  margin-bottom: 20px;
+}
+
+.section-title em { font-style: italic; color: var(--gold); }
+
+.section-body {
+  font-size: 15px;
+  line-height: 1.75;
+  color: var(--muted);
+  max-width: 480px;
+  margin-bottom: 72px;
+  font-weight: 300;
+}
+
+.steps-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: var(--border);
+  border: 0.5px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.step {
+  background: var(--paper);
+  padding: 48px 40px;
+  position: relative;
+}
+
+.step-num {
+  font-family: var(--serif);
+  font-size: 72px;
+  font-weight: 300;
+  color: rgba(14,14,12,0.06);
+  position: absolute;
+  top: 24px;
+  right: 28px;
+  line-height: 1;
+  letter-spacing: -3px;
+}
+
+.step-icon {
+  width: 44px;
+  height: 44px;
+  border: 0.5px solid var(--border);
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 24px;
+  background: var(--cream);
+}
+
+.step-icon svg { width: 20px; height: 20px; stroke: var(--gold); fill: none; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+
+.step h3 {
+  font-family: var(--serif);
+  font-size: 22px;
+  font-weight: 400;
+  letter-spacing: -0.5px;
+  margin-bottom: 12px;
+}
+
+.step p {
+  font-size: 13.5px;
+  line-height: 1.7;
+  color: var(--muted);
+  font-weight: 300;
+}
+
+/* ============================================================
+   SUBJECTS
+   ============================================================ */
+#subjects {
+  padding: 120px 0;
+  background: var(--cream);
+}
+
+.subjects-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+.subject-card {
+  background: var(--paper);
+  border: 0.5px solid var(--border);
+  border-radius: 6px;
+  padding: 32px 28px;
+  transition: transform 0.2s, box-shadow 0.2s;
+  cursor: pointer;
+  text-decoration: none;
+  display: block;
+  color: inherit;
+}
+
+.subject-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(14,14,12,0.08);
+}
+
+.subject-icon {
+  font-family: var(--serif);
+  font-size: 36px;
+  font-weight: 300;
+  font-style: italic;
+  color: var(--gold);
+  margin-bottom: 20px;
+  line-height: 1;
+}
+
+.subject-card h3 {
+  font-family: var(--serif);
+  font-size: 19px;
+  font-weight: 400;
+  margin-bottom: 8px;
+  letter-spacing: -0.3px;
+}
+
+.subject-card p {
+  font-size: 12.5px;
+  color: var(--muted);
+  line-height: 1.6;
+  margin-bottom: 20px;
+  font-weight: 300;
+}
+
+.subject-topics {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.topic-tag {
+  font-size: 10px;
+  padding: 3px 8px;
+  background: var(--cream);
+  border-radius: 3px;
+  color: var(--muted);
+  letter-spacing: 0.3px;
+}
+
+.subject-card.coming-soon {
+  opacity: 0.55;
+  cursor: default;
+}
+
+.subject-card.coming-soon:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+.coming-badge {
+  font-size: 10px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--muted);
+  border: 0.5px solid var(--border);
+  border-radius: 3px;
+  padding: 2px 7px;
+  display: inline-block;
+}
+
+/* ============================================================
+   EXAMINER SECTION
+   ============================================================ */
+#examiner {
+  padding: 120px 0;
+  background: var(--ink);
+  overflow: hidden;
+}
+
+.examiner-inner {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  align-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 80px;
+}
+
+.examiner-left .section-label { color: rgba(200,169,106,0.7); }
+.examiner-left .section-label::before { background: rgba(200,169,106,0.5); }
+
+.examiner-left .section-title {
+  color: var(--paper);
+}
+
+.examiner-left .section-title em { color: var(--gold-lt); }
+
+.examiner-left .section-body {
+  color: rgba(245,241,232,0.5);
+}
+
+.examiner-credentials {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 40px;
+}
+
+.credential-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 18px 20px;
+  background: rgba(245,241,232,0.04);
+  border: 0.5px solid rgba(245,241,232,0.08);
+  border-radius: 6px;
+}
+
+.credential-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(200,169,106,0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.credential-icon svg { width: 14px; height: 14px; stroke: var(--gold-lt); fill: none; stroke-width: 1.5; stroke-linecap: round; }
+
+.credential-text h4 {
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--paper);
+  margin-bottom: 3px;
+}
+
+.credential-text p {
+  font-size: 12px;
+  color: rgba(245,241,232,0.45);
+  line-height: 1.5;
+}
+
+.examiner-right {
+  position: relative;
+}
+
+.quote-card {
+  background: rgba(245,241,232,0.04);
+  border: 0.5px solid rgba(245,241,232,0.1);
+  border-radius: 8px;
+  padding: 40px;
+  position: relative;
+}
+
+.quote-mark {
+  font-family: var(--serif);
+  font-size: 120px;
+  font-weight: 300;
+  color: rgba(200,169,106,0.15);
+  position: absolute;
+  top: -10px;
+  left: 24px;
+  line-height: 1;
+}
+
+.quote-text {
+  font-family: var(--serif);
+  font-size: 22px;
+  font-weight: 300;
+  font-style: italic;
+  color: rgba(245,241,232,0.85);
+  line-height: 1.5;
+  letter-spacing: -0.3px;
+  margin-bottom: 28px;
+  position: relative;
+  z-index: 1;
+}
+
+.quote-attribution {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.quote-avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: rgba(200,169,106,0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--serif);
+  font-size: 17px;
+  font-style: italic;
+  color: var(--gold-lt);
+}
+
+.quote-name {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--paper);
+}
+
+.quote-role {
+  font-size: 11.5px;
+  color: rgba(245,241,232,0.4);
+  margin-top: 2px;
+}
+
+/* ============================================================
+   FEEDBACK DEMO SECTION
+   ============================================================ */
+#demo {
+  padding: 120px 0;
+  background: var(--paper);
+}
+
+.demo-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 80px;
+}
+
+.demo-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 60px;
+}
+
+.demo-tabs {
+  display: flex;
+  gap: 0;
+  background: var(--cream);
+  border: 0.5px solid var(--border);
+  border-radius: 6px;
+  padding: 4px;
+}
+
+.demo-tab {
+  font-size: 12.5px;
+  padding: 7px 18px;
+  border-radius: 4px;
+  cursor: pointer;
+  color: var(--muted);
+  transition: all 0.2s;
+  border: none;
+  background: transparent;
+  font-family: var(--sans);
+}
+
+.demo-tab.active {
+  background: var(--paper);
+  color: var(--ink);
+  box-shadow: 0 1px 4px rgba(14,14,12,0.06);
+}
+
+.demo-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+.demo-panel {
+  background: var(--cream);
+  border: 0.5px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.demo-panel-header {
+  padding: 14px 20px;
+  border-bottom: 0.5px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--paper);
+}
+
+.demo-panel-title {
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.demo-panel-badge {
+  font-size: 11px;
+  padding: 2px 8px;
+  background: rgba(184,148,60,0.12);
+  color: var(--gold);
+  border-radius: 3px;
+}
+
+.demo-panel-body { padding: 24px; }
+
+.demo-essay-text {
+  font-size: 13px;
+  line-height: 1.8;
+  color: rgba(14,14,12,0.65);
+  font-weight: 300;
+}
+
+.demo-result-score {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.demo-score-big {
+  font-family: var(--serif);
+  font-size: 64px;
+  font-weight: 300;
+  color: var(--gold);
+  line-height: 1;
+  letter-spacing: -2px;
+}
+
+.demo-score-den { font-size: 20px; color: var(--muted); }
+
+.demo-grade-pill {
+  background: var(--ink);
+  color: var(--paper);
+  font-size: 12px;
+  padding: 4px 12px;
+  border-radius: 3px;
+  margin-left: 4px;
+}
+
+.demo-ao-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.demo-ao-chip {
+  flex: 1;
+  background: var(--paper);
+  border: 0.5px solid var(--border);
+  border-radius: 4px;
+  padding: 10px 12px;
+  text-align: center;
+}
+
+.demo-ao-label {
+  font-size: 9px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--muted);
+  display: block;
+  margin-bottom: 4px;
+}
+
+.demo-ao-score {
+  font-family: var(--serif);
+  font-size: 22px;
+  font-weight: 400;
+  color: var(--ink);
+}
+
+.demo-commentary {
+  background: var(--paper);
+  border-left: 2px solid var(--gold);
+  padding: 14px 16px;
+  border-radius: 0 5px 5px 0;
+  font-size: 12.5px;
+  line-height: 1.7;
+  color: rgba(14,14,12,0.65);
+  margin-bottom: 16px;
+  font-style: italic;
+  font-family: var(--serif);
+}
+
+.demo-feedback-list { list-style: none; }
+
+.demo-feedback-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 12.5px;
+  color: rgba(14,14,12,0.7);
+  line-height: 1.6;
+  padding: 6px 0;
+  border-bottom: 0.5px solid var(--border);
+}
+
+.demo-feedback-list li:last-child { border-bottom: none; }
+
+.demo-feedback-list .dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  margin-top: 7px;
+  flex-shrink: 0;
+}
+
+/* ============================================================
+   PRICING
+   ============================================================ */
+#pricing {
+  padding: 120px 0;
+  background: var(--cream);
+}
+
+.pricing-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  margin-top: 60px;
+}
+
+.pricing-card {
+  background: var(--paper);
+  border: 0.5px solid var(--border);
+  border-radius: 8px;
+  padding: 40px 36px;
+  position: relative;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.pricing-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 48px rgba(14,14,12,0.08);
+}
+
+.pricing-card.featured {
+  background: var(--ink);
+  border-color: transparent;
+}
+
+.featured-badge {
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--gold);
+  color: var(--ink);
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  padding: 4px 14px;
+  border-radius: 3px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.plan-name {
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 20px;
+}
+
+.pricing-card.featured .plan-name { color: rgba(245,241,232,0.45); }
+
+.plan-price {
+  font-family: var(--serif);
+  font-size: 52px;
+  font-weight: 300;
+  color: var(--ink);
+  letter-spacing: -2px;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+
+.pricing-card.featured .plan-price { color: var(--paper); }
+
+.plan-period {
+  font-size: 13px;
+  color: var(--muted);
+  margin-bottom: 28px;
+  display: block;
+}
+
+.pricing-card.featured .plan-period { color: rgba(245,241,232,0.4); }
+
+.plan-divider {
+  height: 0.5px;
+  background: var(--border);
+  margin-bottom: 28px;
+}
+
+.pricing-card.featured .plan-divider { background: rgba(245,241,232,0.1); }
+
+.plan-features { list-style: none; margin-bottom: 36px; }
+
+.plan-features li {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 13.5px;
+  color: rgba(14,14,12,0.7);
+  line-height: 1.5;
+  padding: 7px 0;
+}
+
+.pricing-card.featured .plan-features li { color: rgba(245,241,232,0.65); }
+
+.plan-features li svg {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+  margin-top: 2px;
+  stroke: var(--sage);
+  fill: none;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.pricing-card.featured .plan-features li svg { stroke: var(--gold-lt); }
+
+.plan-cta {
+  width: 100%;
+  padding: 13px;
+  border-radius: 5px;
+  font-family: var(--sans);
+  font-size: 14px;
+  font-weight: 400;
+  cursor: pointer;
+  text-align: center;
+  text-decoration: none;
+  display: block;
+  transition: all 0.2s;
+  border: 0.5px solid var(--border);
+  background: transparent;
+  color: var(--ink);
+}
+
+.plan-cta:hover { background: var(--cream); }
+
+.plan-cta.featured-cta {
+  background: var(--gold);
+  color: var(--ink);
+  border-color: transparent;
+}
+
+.plan-cta.featured-cta:hover { background: var(--gold-lt); }
+
+/* ============================================================
+   TESTIMONIALS
+   ============================================================ */
+#testimonials {
+  padding: 120px 0;
+  background: var(--paper);
+}
+
+.testimonials-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  margin-top: 60px;
+}
+
+.testimonial-card {
+  background: var(--cream);
+  border: 0.5px solid var(--border);
+  border-radius: 8px;
+  padding: 32px;
+}
+
+.testimonial-stars {
+  display: flex;
+  gap: 3px;
+  margin-bottom: 16px;
+}
+
+.star {
+  color: var(--gold);
+  font-size: 13px;
+}
+
+.testimonial-text {
+  font-family: var(--serif);
+  font-size: 17px;
+  font-weight: 300;
+  font-style: italic;
+  line-height: 1.55;
+  color: var(--ink);
+  letter-spacing: -0.2px;
+  margin-bottom: 22px;
+}
+
+.testimonial-author {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.testimonial-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--serif);
+  font-size: 14px;
+  font-style: italic;
+  color: var(--paper);
+}
+
+.ta-1 { background: var(--sage); }
+.ta-2 { background: var(--red); }
+.ta-3 { background: var(--ink); }
+
+.testimonial-name {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink);
+}
+
+.testimonial-meta {
+  font-size: 11.5px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+/* ============================================================
+   FAQ
+   ============================================================ */
+#faq {
+  padding: 120px 0;
+  background: var(--cream);
+}
+
+.faq-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+  margin-top: 60px;
+  align-items: start;
+}
+
+.faq-list { display: flex; flex-direction: column; gap: 1px; }
+
+.faq-item {
+  background: var(--paper);
+  border: 0.5px solid var(--border);
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.faq-question {
+  padding: 18px 22px;
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--ink);
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  transition: background 0.2s;
+  user-select: none;
+}
+
+.faq-question:hover { background: var(--cream); }
+
+.faq-arrow {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  stroke: var(--muted);
+  fill: none;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  transition: transform 0.25s;
+}
+
+.faq-item.open .faq-arrow { transform: rotate(180deg); }
+
+.faq-answer {
+  font-size: 13.5px;
+  line-height: 1.75;
+  color: var(--muted);
+  font-weight: 300;
+  padding: 0 22px;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease, padding 0.3s ease;
+}
+
+.faq-item.open .faq-answer {
+  max-height: 400px;
+  padding: 0 22px 20px;
+}
+
+.faq-cta-card {
+  background: var(--ink);
+  border-radius: 8px;
+  padding: 48px 40px;
+  position: sticky;
+  top: 88px;
+}
+
+.faq-cta-card .section-label { color: rgba(200,169,106,0.7); }
+.faq-cta-card .section-label::before { background: rgba(200,169,106,0.5); }
+
+.faq-cta-card h3 {
+  font-family: var(--serif);
+  font-size: 34px;
+  font-weight: 300;
+  color: var(--paper);
+  line-height: 1.15;
+  letter-spacing: -1px;
+  margin-bottom: 16px;
+}
+
+.faq-cta-card h3 em { font-style: italic; color: var(--gold-lt); }
+
+.faq-cta-card p {
+  font-size: 14px;
+  color: rgba(245,241,232,0.5);
+  line-height: 1.7;
+  margin-bottom: 32px;
+  font-weight: 300;
+}
+
+.faq-cta-btn {
+  display: block;
+  width: 100%;
+  text-align: center;
+  background: var(--gold);
+  color: var(--ink);
+  border: none;
+  padding: 14px;
+  border-radius: 5px;
+  font-family: var(--sans);
+  font-size: 14px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background 0.2s, transform 0.15s;
+}
+
+.faq-cta-btn:hover { background: var(--gold-lt); transform: translateY(-1px); }
+
+/* ============================================================
+   FOOTER
+   ============================================================ */
+footer {
+  background: var(--ink);
+  padding: 64px 80px 40px;
+}
+
+.footer-top {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 60px;
+  padding-bottom: 48px;
+  border-bottom: 0.5px solid rgba(245,241,232,0.08);
+  margin-bottom: 36px;
+}
+
+.footer-brand {
+  font-family: var(--serif);
+  font-size: 22px;
+  font-weight: 400;
+  color: var(--paper);
+  letter-spacing: -0.3px;
+  margin-bottom: 14px;
+}
+
+.footer-brand em { font-style: italic; color: var(--gold-lt); }
+
+.footer-tagline {
+  font-size: 13px;
+  color: rgba(245,241,232,0.4);
+  line-height: 1.65;
+  max-width: 240px;
+  font-weight: 300;
+}
+
+.footer-col h4 {
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: rgba(245,241,232,0.35);
+  margin-bottom: 18px;
+}
+
+.footer-col ul { list-style: none; }
+
+.footer-col li {
+  margin-bottom: 10px;
+}
+
+.footer-col a {
+  font-size: 13px;
+  color: rgba(245,241,232,0.5);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.footer-col a:hover { color: var(--paper); }
+
+.footer-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.footer-copy {
+  font-size: 12px;
+  color: rgba(245,241,232,0.25);
+}
+
+.footer-legal {
+  display: flex;
+  gap: 24px;
+}
+
+.footer-legal a {
+  font-size: 12px;
+  color: rgba(245,241,232,0.25);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.footer-legal a:hover { color: rgba(245,241,232,0.5); }
+
+/* ============================================================
+   PAGE ANIMATIONS
+   ============================================================ */
+.fade-up {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.fade-up.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.fade-up-delay-1 { transition-delay: 0.1s; }
+.fade-up-delay-2 { transition-delay: 0.2s; }
+.fade-up-delay-3 { transition-delay: 0.3s; }
+.fade-up-delay-4 { transition-delay: 0.4s; }
+
+/* hero animations */
+.hero-eyebrow { animation: fadeUp 0.7s ease 0.1s both; }
+h1 { animation: fadeUp 0.7s ease 0.2s both; }
+.hero-body { animation: fadeUp 0.7s ease 0.35s both; }
+.hero-actions { animation: fadeUp 0.7s ease 0.45s both; }
+.hero-social-proof { animation: fadeUp 0.7s ease 0.55s both; }
+.hero-right { animation: fadeIn 1s ease 0.3s both; }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* counting numbers */
+.count-up { display: inline-block; }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">Grade<em>Mind</em></a>
+  <ul class="nav-links">
+    <li><a href="#how">How it works</a></li>
+    <li><a href="#subjects">Subjects</a></li>
+    <li><a href="#examiner">Our examiners</a></li>
+    <li><a href="#pricing">Pricing</a></li>
+  </ul>
+  <a href="#demo" class="nav-cta">Try it free</a>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-left">
+    <div class="hero-eyebrow">
+      <div class="eyebrow-line"></div>
+      <span class="eyebrow-text">Built with real AQA examiners</span>
+    </div>
+    <h1>Essay marking<br>that thinks like<br>your <em>examiner.</em></h1>
+    <p class="hero-body">GradeMind gives you instant, detailed feedback on your A Level essays — using the exact level descriptors, AO criteria, and examiner language that marks your real exam.</p>
+    <div class="hero-actions">
+      <a href="#demo" class="btn-primary">Mark my essay →</a>
+      <a href="#how" class="btn-ghost">See how it works</a>
+    </div>
+
+  </div>
+  <div class="hero-right">
+    <div class="essay-preview-card">
+      <div class="card-header">
+        <span class="card-header-left">Social influence — 16 marks</span>
+        <div class="card-score-badge">14/16</div>
+      </div>
+      <div class="card-body">
+        <div class="card-question">AQA Psychology · Grade A</div>
+        <div class="card-essay-text">
+          Conformity can be defined as yielding to group pressure. Asch (1951) investigated this using an unambiguous line judgement task, finding that 32% of critical trials resulted in conformity. Deutsch and Gerard (1955) proposed two explanations: normative social influence, where individuals conform to be liked…
+        </div>
+        <div class="card-ao-row">
+          <div class="card-ao-chip">
+            <span class="ao-label">AO1</span>
+            <div class="ao-score">5/6</div>
+          </div>
+          <div class="card-ao-chip">
+            <span class="ao-label">AO3</span>
+            <div class="ao-score">9/10</div>
+          </div>
+          <div class="card-ao-chip">
+            <span class="ao-label">Level</span>
+            <div class="ao-score">4</div>
+          </div>
+        </div>
+        <div class="card-feedback-item">
+          <div class="card-dot dot-green"></div>
+          Strong use of Asch variations to support NSI/ISI distinction
+        </div>
+        <div class="card-feedback-item">
+          <div class="card-dot dot-green"></div>
+          Evaluation of Milgram's methodological limitations is effective
+        </div>
+        <div class="card-feedback-item">
+          <div class="card-dot dot-gold"></div>
+          Develop the "so what?" implication on the cultural bias point
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+<!-- HOW IT WORKS -->
+<section id="how">
+  <div class="section-inner">
+    <div class="section-label fade-up">Process</div>
+    <h2 class="section-title fade-up fade-up-delay-1">From essay to examiner<br>feedback in <em>seconds.</em></h2>
+    <p class="section-body fade-up fade-up-delay-2">No waiting for a teacher. No vague comments. Just precise, actionable feedback built on the same criteria your real examiner uses.</p>
+    <div class="steps-grid">
+      <div class="step fade-up">
+        <div class="step-num">01</div>
+        <div class="step-icon">
+          <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+        </div>
+        <div class="step-num">01</div>
+        <h3>Paste your essay</h3>
+        <p>Select your subject, exam board, topic, and question type. Then paste your essay — or write it directly in the tool.</p>
+      </div>
+      <div class="step fade-up fade-up-delay-1">
+        <div class="step-icon">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        </div>
+        <div class="step-num">02</div>
+        <h3>Examiner AI marks it</h3>
+        <p>Our AI — trained on official mark schemes, level descriptors, and real examiner language — assesses your AO1 and AO3 and awards a mark within the correct band.</p>
+      </div>
+      <div class="step fade-up fade-up-delay-2">
+        <div class="step-icon">
+          <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        </div>
+        <div class="step-num">03</div>
+        <h3>Get precise feedback</h3>
+        <p>Receive a full breakdown: your score, grade, band justification, AO commentary, specific strengths, improvements, and the content you missed.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SUBJECTS -->
+<section id="subjects">
+  <div class="section-inner">
+    <div class="section-label fade-up">Subjects</div>
+    <h2 class="section-title fade-up fade-up-delay-1">Every topic covered.<br><em>Properly.</em></h2>
+    <p class="section-body fade-up fade-up-delay-2">Full coverage of Papers 1, 2, and 3 for AQA Psychology, with subject-specific marking criteria for every topic. More subjects coming soon.</p>
+    <div class="subjects-grid">
+      <a href="#demo" class="subject-card fade-up">
+        <div class="subject-icon">Ψ</div>
+        <h3>Paper 1 — Introductory Topics</h3>
+        <p>All four Paper 1 topics with full 16-mark question banks</p>
+        <div class="subject-topics">
+          <span class="topic-tag">Social influence</span>
+          <span class="topic-tag">Memory</span>
+          <span class="topic-tag">Attachment</span>
+          <span class="topic-tag">Psychopathology</span>
+        </div>
+      </a>
+      <a href="#demo" class="subject-card fade-up fade-up-delay-1">
+        <div class="subject-icon">Ψ</div>
+        <h3>Paper 2 — Psychology in Context</h3>
+        <p>All three Paper 2 topics with full 16-mark question banks</p>
+        <div class="subject-topics">
+          <span class="topic-tag">Approaches</span>
+          <span class="topic-tag">Biopsychology</span>
+          <span class="topic-tag">Research methods</span>
+        </div>
+      </a>
+      <a href="#demo" class="subject-card fade-up fade-up-delay-2">
+        <div class="subject-icon">Ψ</div>
+        <h3>Paper 3 — Issues &amp; Options</h3>
+        <p>Section A (Issues &amp; Debates) plus all optional topic areas</p>
+        <div class="subject-topics">
+          <span class="topic-tag">Issues &amp; debates</span>
+          <span class="topic-tag">Relationships</span>
+          <span class="topic-tag">Gender</span>
+          <span class="topic-tag">Cognition &amp; dev.</span>
+          <span class="topic-tag">Schizophrenia</span>
+          <span class="topic-tag">Eating behaviour</span>
+          <span class="topic-tag">Stress</span>
+          <span class="topic-tag">Aggression</span>
+          <span class="topic-tag">Forensic</span>
+          <span class="topic-tag">Addiction</span>
+        </div>
+      </a>
+      <div class="subject-card coming-soon fade-up fade-up-delay-3">
+        <div class="subject-icon">£</div>
+        <h3>More subjects</h3>
+        <p>Economics, Sociology, History — coming soon</p>
+        <div class="subject-topics">
+          <span class="coming-badge">Coming soon</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- EXAMINER SECTION -->
+<section id="examiner">
+  <div class="examiner-inner">
+    <div class="examiner-left">
+      <div class="section-label fade-up">Why trust it</div>
+      <h2 class="section-title fade-up fade-up-delay-1">Built with the<br>people who write<br>the <em>mark schemes.</em></h2>
+      <p class="section-body fade-up fade-up-delay-2">GradeMind is not generic AI feedback. Every marking criterion, level descriptor, and piece of guidance in our system was developed alongside practising AQA examiners who mark thousands of scripts every summer.</p>
+      <div class="examiner-credentials">
+        <div class="credential-item fade-up fade-up-delay-1">
+          <div class="credential-icon">
+            <svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          </div>
+          <div class="credential-text">
+            <h4>Official AQA level descriptors</h4>
+            <p>Marking criteria taken directly from published mark schemes and examiner training materials</p>
+          </div>
+        </div>
+        <div class="credential-item fade-up fade-up-delay-2">
+          <div class="credential-icon">
+            <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          </div>
+          <div class="credential-text">
+            <h4>Calibrated against real scripts</h4>
+            <p>Our prompts are tested against examiner-marked scripts to align AI marks with human examiner marks</p>
+          </div>
+        </div>
+        <div class="credential-item fade-up fade-up-delay-3">
+          <div class="credential-icon">
+            <svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+          </div>
+          <div class="credential-text">
+            <h4>Examiner language, not AI waffle</h4>
+            <p>Feedback uses the precise phrasing a real examiner would write — not generic praise or vague suggestions</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="examiner-right fade-up fade-up-delay-2">
+      <div class="quote-card">
+        <div class="quote-mark">"</div>
+        <p class="quote-text">Examiner insights and quotes will appear here once we have partnered with qualified AQA examiners. If you are a practising AQA examiner interested in collaborating, we would love to hear from you.</p>
+        <div class="quote-attribution">
+          <div class="quote-avatar" style="background:rgba(200,169,106,0.1);border:0.5px solid rgba(200,169,106,0.2);">?</div>
+          <div>
+            <div class="quote-name">Examiner partner — coming soon</div>
+            <div class="quote-role"><a href="mailto:examiners@grademind.co.uk" style="color:rgba(212,175,96,0.7);text-decoration:none;">examiners@grademind.co.uk</a></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DEMO SECTION -->
+<section id="demo">
+  <div class="demo-inner">
+    <div class="demo-header">
+      <div>
+        <div class="section-label fade-up">Live demo</div>
+        <h2 class="section-title fade-up fade-up-delay-1">Try it yourself,<br><em>right now.</em></h2>
+      </div>
+      <div class="demo-tabs">
+        <button class="demo-tab active" onclick="switchTab('psychology', this)">Psychology</button>
+        <button class="demo-tab" onclick="switchTab('economics', this)">Economics ›</button>
+      </div>
+    </div>
+    <div id="marker-embed">
+      <!-- Marker tool injected here -->
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section id="pricing">
+  <div class="section-inner">
+    <div class="section-label fade-up">Pricing</div>
+    <h2 class="section-title fade-up fade-up-delay-1">Straightforward.<br><em>No surprises.</em></h2>
+    <p class="section-body fade-up fade-up-delay-2">Start free. Upgrade when you need unlimited access. Cancel anytime.</p>
+    <div class="pricing-grid">
+      <div class="pricing-card fade-up">
+        <div class="plan-name">Free</div>
+        <div class="plan-price">£0</div>
+        <span class="plan-period">forever</span>
+        <div class="plan-divider"></div>
+        <ul class="plan-features">
+          <li><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>5 essay marks per month</li>
+          <li><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>AQA Psychology only</li>
+          <li><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Score + grade breakdown</li>
+          <li><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>3 improvement points</li>
+        </ul>
+        <a href="#demo" class="plan-cta">Get started free</a>
+      </div>
+      <div class="pricing-card featured fade-up fade-up-delay-1">
+        <div class="featured-badge">Most popular</div>
+        <div class="plan-name">Student</div>
+        <div class="plan-price">£9</div>
+        <span class="plan-period">per month</span>
+        <div class="plan-divider"></div>
+        <ul class="plan-features">
+          <li><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Unlimited essay marks</li>
+          <li><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>All subjects & topics</li>
+          <li><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Full AO1 + AO3 breakdown</li>
+          <li><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Examiner commentary</li>
+          <li><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Missed content analysis</li>
+          <li><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Progress tracking</li>
+        </ul>
+        <a href="#demo" class="plan-cta featured-cta">Start free trial</a>
+      </div>
+      <div class="pricing-card fade-up fade-up-delay-2">
+        <div class="plan-name">School</div>
+        <div class="plan-price">£4</div>
+        <span class="plan-period">per student / month</span>
+        <div class="plan-divider"></div>
+        <ul class="plan-features">
+          <li><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Everything in Student</li>
+          <li><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Teacher dashboard</li>
+          <li><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Class-wide progress view</li>
+          <li><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Custom question upload</li>
+          <li><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Dedicated support</li>
+        </ul>
+        <a href="mailto:schools@grademind.co.uk" class="plan-cta">Contact us</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+<!-- FAQ -->
+<section id="faq">
+  <div class="section-inner">
+    <div class="faq-grid">
+      <div>
+        <div class="section-label fade-up">FAQ</div>
+        <h2 class="section-title fade-up fade-up-delay-1">Common<br><em>questions.</em></h2>
+        <div class="faq-list" style="margin-top: 40px;">
+          <div class="faq-item">
+            <div class="faq-question" onclick="toggleFaq(this)">
+              How accurate is the marking?
+              <svg class="faq-arrow" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+            </div>
+            <div class="faq-answer">Our AI is calibrated against real AQA-marked scripts and typically lands within 1–2 marks of a human examiner. Like any marking tool, it should be used as high-quality feedback, not as a guaranteed prediction of your final mark. The more you use it, the better you'll understand what the mark scheme rewards.</div>
+          </div>
+          <div class="faq-item">
+            <div class="faq-question" onclick="toggleFaq(this)">
+              Does it work for all AQA Psychology topics?
+              <svg class="faq-arrow" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+            </div>
+            <div class="faq-answer">Yes — all seven topics are fully covered: Social Influence, Memory, Attachment, Psychopathology, Approaches in Psychology, Biopsychology, and Research Methods. Each topic has its own knowledge bank so the AI marks with subject-specific precision.</div>
+          </div>
+          <div class="faq-item">
+            <div class="faq-question" onclick="toggleFaq(this)">
+              Which question types does it mark?
+              <svg class="faq-arrow" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+            </div>
+            <div class="faq-answer">Currently 16-mark "discuss" and "outline and evaluate" essays. 12-mark and 8-mark questions are in development and will be added in the next update.</div>
+          </div>
+          <div class="faq-item">
+            <div class="faq-question" onclick="toggleFaq(this)">
+              Is my essay data stored or shared?
+              <svg class="faq-arrow" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+            </div>
+            <div class="faq-answer">Your essays are processed to generate feedback and are not sold or shared with third parties. We retain anonymised essay data to improve the marking system. You can request deletion of your data at any time from your account settings.</div>
+          </div>
+          <div class="faq-item">
+            <div class="faq-question" onclick="toggleFaq(this)">
+              Can my school or college use GradeMind?
+              <svg class="faq-arrow" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+            </div>
+            <div class="faq-answer">Yes — we have a School plan with a teacher dashboard, class-wide progress tracking, and discounted per-student pricing. Email schools@grademind.co.uk and we'll set up a free trial for your department.</div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="faq-cta-card fade-up fade-up-delay-2">
+          <div class="section-label">Ready to start?</div>
+          <h3>Your next essay<br>could be your<br><em>best one.</em></h3>
+          <p>Try GradeMind free — no credit card needed. Paste your essay, get full examiner feedback in under 30 seconds.</p>
+          <a href="#demo" class="faq-cta-btn">Mark my essay →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-top">
+    <div>
+      <div class="footer-brand">Grade<em>Mind</em></div>
+      <p class="footer-tagline">A Level essay marking, built with real examiners. Helping students understand what top marks actually look like.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Product</h4>
+      <ul>
+        <li><a href="#how">How it works</a></li>
+        <li><a href="#subjects">Subjects</a></li>
+        <li><a href="#pricing">Pricing</a></li>
+        <li><a href="#demo">Try free</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Company</h4>
+      <ul>
+        <li><a href="#">About us</a></li>
+        <li><a href="#">Our examiners</a></li>
+        <li><a href="#">Blog</a></li>
+        <li><a href="mailto:schools@grademind.co.uk">Schools</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Support</h4>
+      <ul>
+        <li><a href="#">Help centre</a></li>
+        <li><a href="#">Contact us</a></li>
+        <li><a href="#">Privacy policy</a></li>
+        <li><a href="#">Terms of service</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span class="footer-copy">© 2025 GradeMind Ltd. All rights reserved.</span>
+    <div class="footer-legal">
+      <a href="#">Privacy</a>
+      <a href="#">Terms</a>
+      <a href="#">Cookies</a>
+    </div>
+  </div>
+</footer>
+
+<!-- INLINE MARKER (injected into #demo section) -->
+<script>
+// ===================== INJECT MARKER INTO DEMO SECTION =====================
+const TOPIC_BANKS = {
+  social_influence:`TOPIC: SOCIAL INFLUENCE\nKey AO1: Types of conformity (compliance, identification, internalisation — Kelman 1958). NSI and ISI (Deutsch & Gerard 1955). Asch (1951): 32% conformity overall, 75% conformed at least once. Milgram (1963): 65% went to 450V; situational factors — proximity, legitimacy of authority, location. Agentic state, legitimacy of authority, buffers, gradual commitment. Authoritarian personality (Adorno — F-scale). Locus of control (Rotter 1966). Minority influence: consistency, commitment, flexibility (Moscovici 1969). Social change: snowball effect, social cryptomnesia.\nKey studies: Asch variations; Milgram variations; Moscovici blue/green slides; Hofling et al; Zimbardo SPE.\nStrong AO3: Milgram — ethical issues; Burger replication; artificial task. NSI/ISI hard to separate. AP — correlation not causation. LOC — mixed evidence.`,
+  memory:`TOPIC: MEMORY\nKey AO1: MSM (Atkinson & Shiffrin 1968) — sensory register, STM, LTM; capacity/duration/encoding; rehearsal loop. WMM (Baddeley & Hitch 1974) — central executive, phonological loop, visuospatial sketchpad, episodic buffer. Types of LTM: episodic, semantic, procedural (Tulving 1985). Forgetting: interference, retrieval failure/cue-dependent. EWT: misleading info (Loftus & Palmer 1974), anxiety. Cognitive interview (Fisher & Geiselman 1992).\nKey studies: Baddeley 1966; Peterson & Peterson 1959; HM case study; Loftus & Palmer; Yuille & Cutshall 1986.\nStrong AO3: MSM — KF case study; WMM — CE vague; Loftus — ecological validity; Yuille contradicts.`,
+  attachment:`TOPIC: ATTACHMENT\nKey AO1: Interactional synchrony (Meltzoff & Moore). Schaffer & Emerson (1964) stages. Lorenz imprinting; Harlow contact comfort. Learning theory vs Bowlby's monotropic theory — monotropy, critical period, IWM. Strange Situation (Ainsworth): Types A/B/C. Van IJzendoorn & Kroonenberg (1988) meta-analysis. Maternal deprivation (Bowlby 1951). Romanian orphans (Rutter et al).\nStrong AO3: Lorenz — generalisation issues; Harlow ethics; Learning theory ignores innate; Bowlby monotropy debated; Strange Situation ecological validity; Rutter deprivation/privation distinction.`,
+  psychopathology:`TOPIC: PSYCHOPATHOLOGY\nKey AO1: Definitions — statistical infrequency, deviation from social norms, failure to function, ideal mental health (Jahoda). Phobias: two-process model (Mowrer), SD, flooding. Depression: Beck's cognitive triad, negative schema, Ellis's ABC, CBT. OCD: genetic (Nestadt), neural — serotonin/OFC/caudate, SSRIs.\nKey studies: Watson & Rayner (Little Albert); Wolpe (SD); Gilroy et al; Beck CBT trials; Nestadt 68% MZ concordance.\nStrong AO3: Statistical infrequency — desirable rareness; social norms — cultural relativity; two-process — not all trauma→phobia; Beck — causality problem; OCD — concordance <100%.`,
+  approaches:`TOPIC: APPROACHES\nKey AO1: Wundt (1879). Behaviourism: Watson, Pavlov (CC), Skinner (OC). SLT (Bandura 1977): mediational processes, vicarious reinforcement, reciprocal determinism. Cognitive: computer analogy, schema. Biological: genes, neurochemistry, evolution. Psychodynamic (Freud): id/ego/superego, psychosexual stages, defence mechanisms. Humanistic (Maslow/Rogers): self-actualisation, conditions of worth.\nStrong AO3: Behaviourism — ignores cognition (Chomsky); SLT — Bobo demand characteristics; Cognitive — reductionist but CBT effective; Biological — deterministic; Psychodynamic — unfalsifiable; Humanistic — vague.`,
+  biopsychology:`TOPIC: BIOPSYCHOLOGY\nKey AO1: CNS vs PNS (somatic/autonomic). Neuron structure and synaptic transmission. Endocrine system. Fight-or-flight. Localisation: Broca's, Wernicke's, motor/somatosensory/visual/auditory. Sperry (1968) split-brain. Plasticity: pruning, sprouting, homologous. Brain imaging: fMRI, EEG, ERPs, post-mortem. Biological rhythms: circadian (SCN, Siffre 1975), infradian, ultradian (Dement & Kleitman 1957). Sleep: restoration vs evolutionary.\nStrong AO3: Localisation — Lashley's equipotentiality; Sperry — unique sample; fMRI — good spatial, poor temporal; circadian — chronotype differences.`,
+  research_methods:`TOPIC: RESEARCH METHODS\nKey AO1: Experimental methods (lab/field/natural/quasi). Experimental designs. Sampling types. BPS ethical guidelines. Data types and levels. Descriptive stats. Correlations. Observations. Self-report. Case studies. Inferential stats: sign test, p≤0.05, Type I/II errors.\nStrong AO3: Lab — internal validity vs ecological validity; field — ethical issues; volunteer sampling — self-selection bias; Ethics — cost-benefit; Correlation — third variable; Observations — inter-rater reliability; Self-report — social desirability.`
+};
+
+const QUESTIONS = {
+  // ── PAPER 1 ──────────────────────────────────────────────────────────────
+  social_influence:[
+    "Discuss research into conformity. (16 marks)",
+    "Outline and evaluate explanations of why people conform. (16 marks)",
+    "'Conformity is determined by situational factors rather than dispositional ones.' Discuss. (16 marks)",
+    "Discuss research into obedience to authority. (16 marks)",
+    "Outline and evaluate situational explanations of obedience. (16 marks)",
+    "Outline and evaluate dispositional explanations of obedience. (16 marks)",
+    "'Milgram's research tells us more about situational factors than about individual differences.' Discuss. (16 marks)",
+    "Discuss research into resistance to social influence. (16 marks)",
+    "Outline and evaluate research into minority influence. (16 marks)",
+    "Discuss the role of minority influence in social change. (16 marks)",
+    "Discuss research into social influence and social change. (16 marks)",
+  ],
+  memory:[
+    "Outline and evaluate the multi-store model of memory. (16 marks)",
+    "Discuss the working memory model. (16 marks)",
+    "'The working memory model is a better explanation of memory than the multi-store model.' Discuss. (16 marks)",
+    "Discuss types of long-term memory. (16 marks)",
+    "Outline and evaluate explanations of forgetting. (16 marks)",
+    "Discuss the role of interference in forgetting. (16 marks)",
+    "Discuss the role of retrieval failure in forgetting. (16 marks)",
+    "Discuss research into the accuracy of eyewitness testimony. (16 marks)",
+    "Outline and evaluate research into the effect of misleading information on eyewitness testimony. (16 marks)",
+    "Outline and evaluate research into the effect of anxiety on eyewitness testimony. (16 marks)",
+    "Discuss the cognitive interview. (16 marks)",
+  ],
+  attachment:[
+    "Discuss research into the development of attachments in humans. (16 marks)",
+    "Outline and evaluate research into caregiver-infant interactions. (16 marks)",
+    "Discuss the role of the father in attachment. (16 marks)",
+    "Outline and evaluate animal studies of attachment. (16 marks)",
+    "Outline and evaluate the learning theory explanation of attachment. (16 marks)",
+    "Outline and evaluate Bowlby's monotropic theory of attachment. (16 marks)",
+    "Discuss Ainsworth's research into types of attachment. (16 marks)",
+    "Outline and evaluate research into cultural variations in attachment. (16 marks)",
+    "Outline and evaluate Bowlby's maternal deprivation hypothesis. (16 marks)",
+    "Discuss research into the effects of institutionalisation on attachment. (16 marks)",
+    "Discuss the influence of early attachment on childhood and adult relationships. (16 marks)",
+  ],
+  psychopathology:[
+    "Outline and evaluate definitions of abnormality. (16 marks)",
+    "Outline and evaluate the statistical infrequency definition of abnormality. (16 marks)",
+    "Outline and evaluate the deviation from social norms definition of abnormality. (16 marks)",
+    "Outline and evaluate the failure to function adequately definition of abnormality. (16 marks)",
+    "Outline and evaluate the deviation from ideal mental health definition of abnormality. (16 marks)",
+    "Discuss the behavioural approach to explaining phobias. (16 marks)",
+    "Discuss the behavioural approach to treating phobias. (16 marks)",
+    "Discuss the behavioural approach to explaining and treating phobias. (16 marks)",
+    "Discuss the cognitive approach to explaining depression. (16 marks)",
+    "Discuss the cognitive approach to treating depression. (16 marks)",
+    "Discuss the cognitive approach to explaining and treating depression. (16 marks)",
+    "Discuss biological explanations of OCD. (16 marks)",
+    "Discuss biological treatments for OCD. (16 marks)",
+    "Discuss biological explanations and/or treatments for OCD. (16 marks)",
+  ],
+  // ── PAPER 2 ──────────────────────────────────────────────────────────────
+  approaches:[
+    "Outline and evaluate the behaviourist approach in psychology. (16 marks)",
+    "Outline and evaluate social learning theory. (16 marks)",
+    "Outline and evaluate the cognitive approach in psychology. (16 marks)",
+    "Outline and evaluate the biological approach in psychology. (16 marks)",
+    "Outline and evaluate the psychodynamic approach in psychology. (16 marks)",
+    "Outline and evaluate the humanistic approach in psychology. (16 marks)",
+    "Compare and contrast the behaviourist and cognitive approaches. (16 marks)",
+    "Compare and contrast the biological and psychodynamic approaches. (16 marks)",
+    "'The biological approach is the most scientific approach in psychology.' Discuss. (16 marks)",
+    "Discuss the origins of psychology, including Wundt and the emergence of psychology as a science. (16 marks)",
+  ],
+  biopsychology:[
+    "Discuss research into localisation of function in the brain. (16 marks)",
+    "Outline and evaluate research into hemispheric lateralisation, including split-brain research. (16 marks)",
+    "Discuss research into plasticity and functional recovery of the brain after trauma. (16 marks)",
+    "Outline and evaluate ways of studying the brain. (16 marks)",
+    "Discuss biological rhythms. (16 marks)",
+    "Discuss research into circadian rhythms. (16 marks)",
+    "Discuss research into infradian and ultradian rhythms. (16 marks)",
+    "Outline and evaluate the endogenous pacemaker and exogenous zeitgeber explanation of circadian rhythms. (16 marks)",
+    "Discuss the divisions of the nervous system and their roles. (16 marks)",
+    "Discuss the structure and function of neurons and synaptic transmission. (16 marks)",
+    "Discuss the fight-or-flight response and the role of the endocrine system. (16 marks)",
+  ],
+  research_methods:[
+    "Discuss the use of experiments in psychological research. (16 marks)",
+    "Discuss the strengths and limitations of laboratory experiments. (16 marks)",
+    "Discuss the use of observational methods in psychological research. (16 marks)",
+    "Outline and evaluate self-report techniques used in psychological research. (16 marks)",
+    "Discuss the use of correlations in psychological research. (16 marks)",
+    "Discuss case studies as a research method in psychology. (16 marks)",
+    "Discuss ethical issues in psychological research. (16 marks)",
+    "Discuss the role of peer review in the scientific process. (16 marks)",
+    "Discuss issues of reliability in psychological research. (16 marks)",
+    "Discuss issues of validity in psychological research. (16 marks)",
+    "Discuss sampling methods used in psychological research. (16 marks)",
+    "Discuss the use of inferential statistics in psychological research. (16 marks)",
+  ],
+  // ── PAPER 3 — ISSUES & DEBATES ───────────────────────────────────────────
+  issues_debates:[
+    "Discuss gender bias in psychology. (16 marks)",
+    "Discuss cultural bias in psychology. (16 marks)",
+    "Discuss the nature-nurture debate in psychology. (16 marks)",
+    "Discuss the free will and determinism debate in psychology. (16 marks)",
+    "Discuss the use of reductionism in psychological explanations. (16 marks)",
+    "Discuss holism and reductionism in psychology. (16 marks)",
+    "Discuss idiographic and nomothetic approaches in psychology. (16 marks)",
+    "Discuss ethical implications of research studies and theory in psychology. (16 marks)",
+    "'Psychology is a science.' Discuss. (16 marks)",
+    "Discuss the extent to which psychology can be considered a science. (16 marks)",
+    "Discuss the use of animals in psychological research. (16 marks)",
+    "Discuss the socially sensitive research debate in psychology. (16 marks)",
+  ],
+  // ── PAPER 3 — OPTIONAL TOPICS ────────────────────────────────────────────
+  relationships:[
+    "Discuss evolutionary explanations of human reproductive behaviour. (16 marks)",
+    "Discuss the influence of childhood on adult relationships. (16 marks)",
+    "Discuss the influence of culture on romantic relationships. (16 marks)",
+    "Outline and evaluate the social exchange theory of relationships. (16 marks)",
+    "Outline and evaluate equity theory of relationships. (16 marks)",
+    "Outline and evaluate Rusbult's investment model of relationships. (16 marks)",
+    "Discuss factors affecting attraction in romantic relationships. (16 marks)",
+    "Discuss theories of romantic relationships. (16 marks)",
+    "Discuss research into the breakdown of romantic relationships. (16 marks)",
+    "Discuss research into virtual relationships in social media. (16 marks)",
+    "Discuss research into parasocial relationships. (16 marks)",
+  ],
+  gender:[
+    "Discuss the role of hormones in sex and gender. (16 marks)",
+    "Discuss the role of chromosomes in sex and gender. (16 marks)",
+    "Outline and evaluate the psychodynamic explanation of gender development. (16 marks)",
+    "Outline and evaluate social learning theory as applied to gender development. (16 marks)",
+    "Discuss cognitive explanations of gender development, including gender schema theory. (16 marks)",
+    "Discuss the influence of culture on gender roles. (16 marks)",
+    "Discuss cross-cultural research into gender. (16 marks)",
+    "Discuss biological explanations of gender dysphoria. (16 marks)",
+    "Discuss research into atypical sex chromosome patterns. (16 marks)",
+    "Discuss the biosocial approach to gender development. (16 marks)",
+  ],
+  cognition_dev:[
+    "Outline and evaluate Piaget's theory of cognitive development. (16 marks)",
+    "Outline and evaluate Vygotsky's theory of cognitive development. (16 marks)",
+    "Compare and contrast Piaget's and Vygotsky's theories of cognitive development. (16 marks)",
+    "Discuss Baillargeon's explanation of infant abilities. (16 marks)",
+    "Discuss research into the development of social cognition. (16 marks)",
+    "Discuss the development of theory of mind. (16 marks)",
+    "Discuss research into mirror neurons and their role in social cognition. (16 marks)",
+    "Outline and evaluate Selman's levels of perspective-taking. (16 marks)",
+    "Discuss the role of the child as a scientist in Piaget's theory. (16 marks)",
+  ],
+  schizophrenia:[
+    "Discuss biological explanations of schizophrenia. (16 marks)",
+    "Discuss psychological explanations of schizophrenia. (16 marks)",
+    "Discuss the dopamine hypothesis as an explanation for schizophrenia. (16 marks)",
+    "Discuss neural correlates of schizophrenia. (16 marks)",
+    "Discuss genetic explanations of schizophrenia. (16 marks)",
+    "Discuss family dysfunction as an explanation of schizophrenia. (16 marks)",
+    "Discuss cognitive explanations of schizophrenia. (16 marks)",
+    "Discuss biological therapies for schizophrenia. (16 marks)",
+    "Discuss psychological therapies for schizophrenia. (16 marks)",
+    "Discuss the use of drug therapy in treating schizophrenia. (16 marks)",
+    "Discuss CBT as a treatment for schizophrenia. (16 marks)",
+    "Discuss the interactionist approach to schizophrenia. (16 marks)",
+    "Discuss issues surrounding the diagnosis and classification of schizophrenia. (16 marks)",
+  ],
+  eating_behaviour:[
+    "Discuss explanations for food preferences. (16 marks)",
+    "Discuss evolutionary explanations of food preference. (16 marks)",
+    "Discuss the role of learning in food preference. (16 marks)",
+    "Discuss neural and hormonal mechanisms in the control of eating behaviour. (16 marks)",
+    "Discuss evolutionary explanations of eating behaviour. (16 marks)",
+    "Discuss biological explanations of anorexia nervosa. (16 marks)",
+    "Discuss psychological explanations of anorexia nervosa. (16 marks)",
+    "Discuss biological explanations of obesity. (16 marks)",
+    "Discuss psychological explanations of obesity. (16 marks)",
+    "Discuss explanations for the success or failure of dieting. (16 marks)",
+  ],
+  stress:[
+    "Discuss the role of the hypothalamic-pituitary-adrenal (HPA) system in the stress response. (16 marks)",
+    "Discuss the sympathomedullary pathway (SAM) in the stress response. (16 marks)",
+    "Discuss the role of the immune system in the relationship between stress and illness. (16 marks)",
+    "Discuss research into life changes and stress. (16 marks)",
+    "Discuss research into daily hassles and stress. (16 marks)",
+    "Discuss research into workplace stress. (16 marks)",
+    "Discuss the relationship between stress and cardiovascular disorders. (16 marks)",
+    "Discuss individual differences in the stress response. (16 marks)",
+    "Discuss the role of personality in stress. (16 marks)",
+    "Outline and evaluate drug therapy as a method of managing stress. (16 marks)",
+    "Outline and evaluate psychological methods of stress management. (16 marks)",
+    "Discuss biofeedback as a method of stress management. (16 marks)",
+    "Discuss the role of social support in coping with stress. (16 marks)",
+  ],
+  aggression:[
+    "Discuss neural and hormonal mechanisms in aggression. (16 marks)",
+    "Discuss the role of genetics in aggression. (16 marks)",
+    "Discuss ethological explanations of aggression. (16 marks)",
+    "Discuss evolutionary explanations of human aggression. (16 marks)",
+    "Outline and evaluate the frustration-aggression hypothesis. (16 marks)",
+    "Discuss social learning theory as applied to human aggression. (16 marks)",
+    "Discuss de-individuation as an explanation of human aggression. (16 marks)",
+    "Discuss institutional aggression in the context of prisons. (16 marks)",
+    "Discuss media influences on aggression. (16 marks)",
+    "Discuss the role of desensitisation in media influences on aggression. (16 marks)",
+    "Discuss research into aggression in computer games. (16 marks)",
+  ],
+  forensic:[
+    "Discuss biological explanations of offending behaviour. (16 marks)",
+    "Discuss atavistic form as a biological explanation of offending. (16 marks)",
+    "Discuss genetic and neural explanations of offending behaviour. (16 marks)",
+    "Discuss psychological explanations of offending behaviour. (16 marks)",
+    "Discuss Eysenck's theory of the criminal personality. (16 marks)",
+    "Discuss cognitive explanations of offending behaviour. (16 marks)",
+    "Discuss differential association theory as an explanation of offending. (16 marks)",
+    "Discuss psychodynamic explanations of offending behaviour. (16 marks)",
+    "Discuss issues in offender profiling, including the top-down approach. (16 marks)",
+    "Discuss issues in offender profiling, including the bottom-up approach. (16 marks)",
+    "Discuss custodial sentencing and its effects on recidivism. (16 marks)",
+    "Discuss psychological explanations of treatment programmes for offending behaviour. (16 marks)",
+    "Discuss anger management as a treatment for offending behaviour. (16 marks)",
+    "Discuss restorative justice programmes. (16 marks)",
+  ],
+  addiction:[
+    "Discuss risk factors in the development of addiction. (16 marks)",
+    "Discuss genetic vulnerabilities as a risk factor in addiction. (16 marks)",
+    "Discuss stress as a risk factor in the development of addiction. (16 marks)",
+    "Discuss the role of peers in addiction. (16 marks)",
+    "Discuss the role of the media in addiction. (16 marks)",
+    "Discuss explanations for nicotine addiction. (16 marks)",
+    "Discuss explanations for gambling addiction. (16 marks)",
+    "Discuss the brain neurochemistry of addiction, including the role of dopamine. (16 marks)",
+    "Discuss learning theory as applied to addiction. (16 marks)",
+    "Discuss cognitive explanations of addiction. (16 marks)",
+    "Discuss biological interventions for reducing addiction. (16 marks)",
+    "Discuss psychological interventions for reducing addiction. (16 marks)",
+    "Discuss behavioural interventions for addiction, including aversion therapy and CBT. (16 marks)",
+  ],
+};
+
+document.getElementById('marker-embed').innerHTML = `
+<div style="background:#F5F1E8;border:0.5px solid rgba(14,14,12,0.1);border-radius:10px;overflow:hidden;">
+  <div style="background:#0E0E0C;padding:20px 28px;display:flex;align-items:center;justify-content:space-between;">
+    <span style="font-family:'Cormorant Garamond',serif;font-size:15px;color:rgba(245,241,232,0.65);font-style:italic;">16-mark essay marker — AQA Psychology</span>
+    <span style="font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:rgba(200,169,106,0.7);background:rgba(200,169,106,0.1);padding:4px 12px;border-radius:3px;">Live</span>
+  </div>
+  <div style="padding:28px;">
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px;">
+      <select id="m-topic" onchange="markerUpdateQ()" style="background:white;border:0.5px solid rgba(14,14,12,0.12);color:#0E0E0C;padding:9px 34px 9px 14px;border-radius:5px;font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;appearance:none;background-image:url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2211%22 height=%227%22 viewBox=%220 0 11 7%22%3E%3Cpath d=%22M1 1l4.5 4.5L10 1%22 stroke=%22%23888%22 stroke-width=%221.5%22 fill=%22none%22 stroke-linecap=%22round%22/%3E%3C/svg%3E');background-repeat:no-repeat;background-position:right 11px center;">
+        <optgroup label="Paper 1 — Introductory Topics">
+          <option value="social_influence">Social influence</option>
+          <option value="memory">Memory</option>
+          <option value="attachment">Attachment</option>
+          <option value="psychopathology">Psychopathology</option>
+        </optgroup>
+        <optgroup label="Paper 2 — Psychology in Context">
+          <option value="approaches">Approaches in psychology</option>
+          <option value="biopsychology">Biopsychology</option>
+          <option value="research_methods">Research methods</option>
+        </optgroup>
+        <optgroup label="Paper 3 — Issues &amp; Debates">
+          <option value="issues_debates">Issues and debates in psychology</option>
+        </optgroup>
+        <optgroup label="Paper 3 — Optional Topics">
+          <option value="relationships">Relationships</option>
+          <option value="gender">Gender</option>
+          <option value="cognition_dev">Cognition &amp; development</option>
+          <option value="schizophrenia">Schizophrenia</option>
+          <option value="eating_behaviour">Eating behaviour</option>
+          <option value="stress">Stress</option>
+          <option value="aggression">Aggression</option>
+          <option value="forensic">Forensic psychology</option>
+          <option value="addiction">Addiction</option>
+        </optgroup>
+      </select>
+      <select id="m-question" style="background:white;border:0.5px solid rgba(14,14,12,0.12);color:#0E0E0C;padding:9px 34px 9px 14px;border-radius:5px;font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;appearance:none;background-image:url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2211%22 height=%227%22 viewBox=%220 0 11 7%22%3E%3Cpath d=%22M1 1l4.5 4.5L10 1%22 stroke=%22%23888%22 stroke-width=%221.5%22 fill=%22none%22 stroke-linecap=%22round%22/%3E%3C/svg%3E');background-repeat:no-repeat;background-position:right 11px center;flex:1;min-width:200px;"></select>
+    </div>
+    <textarea id="m-essay" placeholder="Paste your essay here. Aim for 600–800 words. Include AO1 (knowledge) and AO3 (evaluation)..." style="width:100%;background:white;border:0.5px solid rgba(14,14,12,0.1);border-radius:7px;padding:16px 18px;color:#0E0E0C;font-family:'DM Sans',sans-serif;font-size:13.5px;line-height:1.75;resize:vertical;min-height:200px;font-weight:300;" oninput="markerWC()"></textarea>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px;">
+      <span id="m-wc" style="font-size:12px;color:rgba(14,14,12,0.35);">0 words</span>
+      <button id="m-btn" onclick="markerMark()" style="background:#0E0E0C;color:#F5F1E8;border:none;padding:11px 28px;border-radius:5px;font-family:'DM Sans',sans-serif;font-size:14px;cursor:pointer;display:flex;align-items:center;gap:8px;transition:background 0.2s;">
+        <div id="m-spin" style="width:13px;height:13px;border:2px solid rgba(245,241,232,0.2);border-top-color:#F5F1E8;border-radius:50%;animation:spin 0.7s linear infinite;display:none;"></div>
+        <span id="m-btxt">Mark my essay</span>
+      </button>
+    </div>
+    <div id="m-err" style="display:none;background:rgba(139,38,53,0.08);border:0.5px solid rgba(139,38,53,0.2);border-radius:6px;padding:12px 16px;font-size:13px;color:#8B2635;margin-top:10px;"></div>
+    <div id="m-results" style="display:none;margin-top:32px;border-top:0.5px solid rgba(14,14,12,0.1);padding-top:28px;">
+      <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:6px;">
+        <div id="m-scorenum" style="font-family:'Cormorant Garamond',serif;font-size:72px;font-weight:300;color:#B8943C;line-height:1;letter-spacing:-3px;"></div>
+        <div style="font-size:22px;color:rgba(14,14,12,0.35)">/16</div>
+        <div id="m-grade" style="background:#0E0E0C;color:#F5F1E8;font-size:12px;padding:5px 14px;border-radius:3px;margin-left:4px;"></div>
+      </div>
+      <div id="m-chips" style="display:flex;gap:8px;margin:16px 0 20px;flex-wrap:wrap;"></div>
+      <div id="m-bandjust" style="background:rgba(14,14,12,0.04);border-left:2px solid rgba(14,14,12,0.15);padding:12px 16px;border-radius:0 5px 5px 0;font-size:13px;color:rgba(14,14,12,0.6);line-height:1.65;margin-bottom:14px;"></div>
+      <div style="background:rgba(184,148,60,0.07);border-left:2px solid rgba(184,148,60,0.5);padding:14px 18px;border-radius:0 6px 6px 0;font-size:13.5px;color:rgba(14,14,12,0.65);line-height:1.7;font-family:'Cormorant Garamond',serif;font-style:italic;margin-bottom:18px;" id="m-com"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;">
+        <div style="background:white;border:0.5px solid rgba(14,14,12,0.08);border-radius:7px;padding:16px;">
+          <div style="font-size:10px;letter-spacing:1.2px;text-transform:uppercase;color:rgba(14,14,12,0.35);margin-bottom:8px;">AO1 — Knowledge</div>
+          <p id="m-ao1fb" style="font-size:13px;color:rgba(14,14,12,0.65);line-height:1.6;"></p>
+        </div>
+        <div style="background:white;border:0.5px solid rgba(14,14,12,0.08);border-radius:7px;padding:16px;">
+          <div style="font-size:10px;letter-spacing:1.2px;text-transform:uppercase;color:rgba(14,14,12,0.35);margin-bottom:8px;">AO3 — Evaluation</div>
+          <p id="m-ao3fb" style="font-size:13px;color:rgba(14,14,12,0.65);line-height:1.6;"></p>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;">
+        <div style="background:white;border:0.5px solid rgba(14,14,12,0.08);border-radius:7px;padding:16px;">
+          <div style="font-size:10px;letter-spacing:1.2px;text-transform:uppercase;color:rgba(14,14,12,0.35);margin-bottom:10px;">Strengths</div>
+          <ul id="m-str" style="list-style:none;"></ul>
+        </div>
+        <div style="background:white;border:0.5px solid rgba(14,14,12,0.08);border-radius:7px;padding:16px;">
+          <div style="font-size:10px;letter-spacing:1.2px;text-transform:uppercase;color:rgba(14,14,12,0.35);margin-bottom:10px;">To improve</div>
+          <ul id="m-imp" style="list-style:none;"></ul>
+        </div>
+      </div>
+      <div id="m-missedwrap" style="background:rgba(14,14,12,0.03);border:0.5px solid rgba(14,14,12,0.07);border-radius:6px;padding:14px 16px;font-size:13px;color:rgba(14,14,12,0.55);line-height:1.65;display:none;">
+        <div style="font-size:10px;letter-spacing:1.2px;text-transform:uppercase;color:rgba(14,14,12,0.3);margin-bottom:6px;font-weight:500;">Missed content &amp; opportunities</div>
+        <span id="m-missed"></span>
+      </div>
+    </div>
+  </div>
+</div>
+<style>@keyframes spin{to{transform:rotate(360deg)}}</style>
+`;
+
+markerUpdateQ();
+
+function markerUpdateQ() {
+  const t = document.getElementById('m-topic').value;
+  const sel = document.getElementById('m-question');
+  sel.innerHTML = (QUESTIONS[t]||[]).map(q=>`<option value="${q}">${q}</option>`).join('');
+}
+
+function markerWC() {
+  const t = document.getElementById('m-essay').value.trim();
+  document.getElementById('m-wc').textContent = (t ? t.split(/\s+/).length : 0) + ' words';
+}
+
+async function markerMark() {
+  const essay = document.getElementById('m-essay').value.trim();
+  const topic = document.getElementById('m-topic').value;
+  const topicLabel = document.getElementById('m-topic').options[document.getElementById('m-topic').selectedIndex].text;
+  const question = document.getElementById('m-question').value;
+  const errEl = document.getElementById('m-err');
+  errEl.style.display = 'none';
+
+  if (essay.length < 80) {
+    errEl.textContent = 'Please paste a full essay before marking.';
+    errEl.style.display = 'block';
+    return;
+  }
+
+  const btn = document.getElementById('m-btn');
+  const spin = document.getElementById('m-spin');
+  const btxt = document.getElementById('m-btxt');
+  btn.disabled = true; spin.style.display = 'block'; btxt.textContent = 'Marking...';
+  document.getElementById('m-results').style.display = 'none';
+
+  const systemPrompt = `You are a senior AQA A Level Psychology examiner. Mark this 16-mark essay using official AQA level descriptors. AO1 = 6 marks, AO3 = 10 marks. Total = 16 marks.
+
+LEVEL 4 (13-16): Thorough, accurate knowledge with full terminology. Effective, well-reasoned evaluation using evidence + implications. Coherent structure.
+LEVEL 3 (9-12): Reasonably thorough, mostly accurate. Some effective evaluation but inconsistent. Generally organised.
+LEVEL 2 (5-8): Limited knowledge. Evaluation attempted but not developed. Points identified without explanation of significance.
+LEVEL 1 (1-4): Minimal/inaccurate knowledge. Evaluation absent or ineffective.
+
+CRITICAL: Effective AO3 = Point + Named evidence + Implication for the theory ("so what?"). Generic statements like "lacks ecological validity" with no development = Level 2 evaluation. Cap imbalanced essays (strong AO1, weak AO3) in lower Level 3.
+
+Grade boundaries: A*=15-16, A=13-14, B=11-12, C=9-10, D=7-8, E=5-6, U=1-4
+
+TOPIC KNOWLEDGE:
+${TOPIC_BANKS[topic]}
+
+Respond ONLY with JSON, no preamble:
+{"totalScore":<1-16>,"level":<1-4>,"ao1Score":<1-6>,"ao3Score":<1-10>,"grade":"<A*|A|B|C|D|E|U>","bandJustification":"<1-2 sentences>","examinerCommentary":"<3-4 sentences in examiner voice referencing specific essay content>","ao1Feedback":"<1-2 sentences>","ao3Feedback":"<1-2 sentences>","strengths":["<specific>","<specific>","<specific>"],"improvements":["<specific with example>","<specific>","<specific>"],"missedContent":"<key omissions or empty string>"}`;
+
+  try {
+    const PROXY_URL = 'https://grademind-proxy.kiranfinamordamania.workers.dev';
+
+    const res = await fetch(PROXY_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-5',
+        max_tokens: 1500,
+        system: systemPrompt,
+        messages: [{ role: 'user', content: `Mark this AQA Psychology 16-mark essay.\nTopic: ${topicLabel}\nQuestion: ${question}\n\nEssay:\n${essay}` }]
+      })
+    });
+
+    if (!res.ok) {
+      const errBody = await res.text();
+      throw new Error(`API error ${res.status}: ${errBody}`);
+    }
+
+    const data = await res.json();
+
+    // Handle API-level errors returned in the body
+    if (data.error) throw new Error(data.error.message || JSON.stringify(data.error));
+
+    const text = (data.content || []).map(i => i.text || '').join('');
+    if (!text) throw new Error('Empty response from API');
+
+    // Strip any markdown fences before parsing
+    const clean = text.replace(/^```json\s*/i, '').replace(/^```\s*/i, '').replace(/```\s*$/i, '').trim();
+    const r = JSON.parse(clean);
+
+    document.getElementById('m-scorenum').textContent = r.totalScore;
+    document.getElementById('m-grade').textContent = 'Grade ' + r.grade + ' · Level ' + r.level;
+
+    document.getElementById('m-chips').innerHTML = [
+      `<div style="background:rgba(14,14,12,0.06);border-radius:4px;padding:7px 14px;font-size:12px;color:rgba(14,14,12,0.55);">AO1 <strong style="color:#0E0E0C">${r.ao1Score}/6</strong></div>`,
+      `<div style="background:rgba(14,14,12,0.06);border-radius:4px;padding:7px 14px;font-size:12px;color:rgba(14,14,12,0.55);">AO3 <strong style="color:#0E0E0C">${r.ao3Score}/10</strong></div>`,
+      `<div style="background:rgba(184,148,60,0.1);border-radius:4px;padding:7px 14px;font-size:12px;color:#B8943C;">Level ${r.level}</div>`
+    ].join('');
+
+    document.getElementById('m-bandjust').textContent = r.bandJustification;
+    document.getElementById('m-com').textContent = r.examinerCommentary;
+    document.getElementById('m-ao1fb').textContent = r.ao1Feedback;
+    document.getElementById('m-ao3fb').textContent = r.ao3Feedback;
+
+    const liStyle = 'display:flex;align-items:flex-start;gap:7px;font-size:12.5px;color:rgba(14,14,12,0.7);line-height:1.6;padding:5px 0;border-bottom:0.5px solid rgba(14,14,12,0.06);';
+    document.getElementById('m-str').innerHTML = (r.strengths || []).map(s => `<li style="${liStyle}"><span style="width:5px;height:5px;border-radius:50%;background:#4A5E4E;margin-top:7px;flex-shrink:0;display:inline-block;"></span>${s}</li>`).join('');
+    document.getElementById('m-imp').innerHTML = (r.improvements || []).map(s => `<li style="${liStyle}"><span style="width:5px;height:5px;border-radius:50%;background:#B8943C;margin-top:7px;flex-shrink:0;display:inline-block;"></span>${s}</li>`).join('');
+
+    const mw = document.getElementById('m-missedwrap');
+    if (r.missedContent && r.missedContent.length > 5) {
+      document.getElementById('m-missed').textContent = r.missedContent;
+      mw.style.display = 'block';
+    } else {
+      mw.style.display = 'none';
+    }
+
+    document.getElementById('m-results').style.display = 'block';
+    document.getElementById('m-results').scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+  } catch (e) {
+    errEl.textContent = 'Error: ' + (e.message || 'Unknown error. Open browser console (F12) for details.');
+    errEl.style.display = 'block';
+    console.error('GradeMind marking error:', e);
+  } finally {
+    btn.disabled = false; spin.style.display = 'none'; btxt.textContent = 'Mark my essay';
+  }
+}
+
+// ===================== TABS =====================
+function switchTab(subject, el) {
+  document.querySelectorAll('.demo-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+}
+
+// ===================== FAQ =====================
+function toggleFaq(el) {
+  const item = el.closest('.faq-item');
+  const isOpen = item.classList.contains('open');
+  document.querySelectorAll('.faq-item.open').forEach(i => i.classList.remove('open'));
+  if (!isOpen) item.classList.add('open');
+}
+
+// ===================== SCROLL ANIMATIONS =====================
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); } });
+}, { threshold: 0.12 });
+
+document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+
+// ===================== COUNT UP =====================
+function countUp(el, target, duration=1800) {
+  let start = 0;
+  const step = Math.ceil(target / (duration / 16));
+  const timer = setInterval(() => {
+    start += step;
+    if (start >= target) { el.textContent = target.toLocaleString(); clearInterval(timer); }
+    else { el.textContent = start.toLocaleString(); }
+  }, 16);
+}
+
+const countObserver = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      const target = parseInt(e.target.dataset.target);
+      countUp(e.target, target);
+      countObserver.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.5 });
+
+document.querySelectorAll('.count-up').forEach(el => countObserver.observe(el));
+</script>
+</body>
+</html>
